@@ -1,0 +1,55 @@
+services:
+
+    small-console-alpine:
+        image: small-console:alpine
+        container_name: small-console-alpine
+        build:
+            dockerfile: ./Dockerfile.console
+            target: final-alpine
+            
+    small-console-busybox:
+        image: small-console:busybox
+        container_name: small-console-busybox
+        build:
+            dockerfile: ./Dockerfile.console
+            target: final-busybox
+            
+    small-console-scratch:
+        image: small-console:scratch
+        container_name: small-console-scratch
+        build:
+            dockerfile: ./Dockerfile.console
+            target: final-scratch
+
+    small-web-alpine:
+        image: small-web:alpine
+        container_name: small-web-alpine
+        build:
+            dockerfile: ./Dockerfile.web
+            target: final-alpine
+        environment:
+            - ASPNETCORE_HTTP_PORTS=5001
+        ports:
+            - "5001:5001"
+            
+    small-web-busybox:
+        image: small-web:busybox
+        container_name: small-web-busybox
+        build:
+            dockerfile: ./Dockerfile.web
+            target: final-busybox
+        environment:
+            - ASPNETCORE_HTTP_PORTS=5002
+        ports:
+            - "5002:5002"
+            
+    small-web-scratch:
+        image: small-web:scratch
+        container_name: small-web-scratch
+        build:
+            dockerfile: ./Dockerfile.web
+            target: final-scratch
+        environment:
+            - ASPNETCORE_HTTP_PORTS=5003
+        ports:
+            - "5003:5003"

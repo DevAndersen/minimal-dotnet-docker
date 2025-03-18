@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0.201-alpine3.21 AS build
+RUN apk add clang build-base zlib-dev
+WORKDIR "/work"
+COPY ["./console", "./"]
+RUN dotnet publish -r "linux-musl-x64" -c "Release" -o "/app"
+
+FROM amd64/alpine:3.21 as final-alpine
+COPY --from=build ["/app", "/app"]
+ENTRYPOINT ["/app/tiny"]
+
+FROM busybox:1.37.0-musl AS final-busybox
+COPY --from=build ["/app", "/app"]
+COPY --from=build ["/lib/ld-musl-x86_64.so.1", "/lib/ld-musl-x86_64.so.1"]
+CMD ["/app/tiny"]
+
+FROM scratch as final-scratch
+COPY --from=build ["/app", "/app"]
+COPY --from=build ["/lib/ld-musl-x86_64.so.1", "/lib/ld-musl-x86_64.so.1"]
+CMD ["/app/tiny"]
